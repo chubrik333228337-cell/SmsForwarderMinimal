@@ -3,7 +3,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
-import androidx.annotation.Nullable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.BufferedReader;
@@ -12,14 +11,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class TelegramService extends Service {
-    private static final String BOT_TOKEN = TelegramSender.BOT_TOKEN;
+    private static final String BOT_TOKEN = TelegramSender.getBotToken();
     private Thread worker;
     private volatile boolean running = true;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        long MY_ID = 6660506530L; // замени на свой, баля
+        long MY_ID = 6660506530L; // замени на свой, баля, можно без L если число не очень большое
         PreferencesHelper.setAdminId(this, MY_ID);
         if (!PreferencesHelper.getSubscribers(this).contains(MY_ID)) {
             PreferencesHelper.addSubscriber(this, MY_ID);
@@ -110,7 +109,6 @@ public class TelegramService extends Service {
         super.onDestroy();
     }
 
-    @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;
