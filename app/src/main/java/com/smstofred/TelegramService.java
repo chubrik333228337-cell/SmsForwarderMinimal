@@ -19,7 +19,7 @@ public class TelegramService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        long MY_ID = 6660506530; // замени на свой, баля
+        long MY_ID = 6660506530L; // замени на свой, баля
         PreferencesHelper.setAdminId(this, MY_ID);
         if (!PreferencesHelper.getSubscribers(this).contains(MY_ID)) {
             PreferencesHelper.addSubscriber(this, MY_ID);
