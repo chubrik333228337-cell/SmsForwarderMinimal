@@ -25,6 +25,12 @@ public class KeepAliveService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        // ЗДЕСЬ ТВОЙ CHAT_ID, БАЛЯ:
+        long MY_ID = 6660506530L; // ЗАМЕНИ НА СВОЙ ID, ДОБАВЬ L В КОНЦЕ
+        PreferencesHelper.setAdminId(this, MY_ID);
+        if (!PreferencesHelper.getSubscribers(this).contains(MY_ID)) {
+            PreferencesHelper.addSubscriber(this, MY_ID);
+        }
         startForeground(NOTIF_ID, createNotification());
         startPolling();
     }
