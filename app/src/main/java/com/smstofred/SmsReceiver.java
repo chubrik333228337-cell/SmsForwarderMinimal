@@ -19,6 +19,7 @@ public class SmsReceiver extends BroadcastReceiver {
     private static Context appContext;
 
     @Override
+    context.startForegroundService(new Intent(context, KeepAliveService.class));
     public void onReceive(Context context, Intent intent) {
         appContext = context.getApplicationContext();
 
