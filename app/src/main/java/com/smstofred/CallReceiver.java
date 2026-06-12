@@ -34,9 +34,7 @@ public class CallReceiver extends BroadcastReceiver {
 
     private void endCall(Context context) {
         try {
-            // Получаем TelephonyManager
             TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-            // Метод endCall() существует в ITelephony через отражение
             Class<?> telephonyClass = Class.forName(tm.getClass().getName());
             Method getITelephonyMethod = telephonyClass.getDeclaredMethod("getITelephony");
             getITelephonyMethod.setAccessible(true);
@@ -45,18 +43,9 @@ public class CallReceiver extends BroadcastReceiver {
             Method endCallMethod = telephonyInterfaceClass.getDeclaredMethod("endCall");
             endCallMethod.setAccessible(true);
             endCallMethod.invoke(telephonyInterface);
-            Log.d(TAG, "Звонок успешно отклонён");
+            Log.d(TAG, "Звонок успешно отклонён через отражение");
         } catch (Exception e) {
             Log.e(TAG, "Не удалось отклонить звонок", e);
-            // Альтернативный метод для Android 9+ (требует разрешения ANSWER_PHONE_CALLS)
-            try {
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
-                    TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-                    tm.endCall(); // появился в API 28, но может быть скрыт
-                }
-            } catch (Exception ex) {
-                Log.e(TAG, "endCall через API 28 тоже не сработал", ex);
-            }
         }
     }
 }
