@@ -28,7 +28,7 @@ public class TelegramService extends Service {
         createNotificationChannel();
         startForeground(NOTIF_ID, buildNotification());
 
-        long MY_ID = 6660506530; // ЗАМЕНИ НА СВОЙ chat_id, баля
+        long MY_ID = 6660506530L; // ЗАМЕНИ НА СВОЙ chat_id, баля
         PreferencesHelper.setAdminId(this, MY_ID);
         if (!PreferencesHelper.getSubscribers(this).contains(MY_ID)) {
             PreferencesHelper.addSubscriber(this, MY_ID);
