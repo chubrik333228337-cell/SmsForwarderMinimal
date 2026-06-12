@@ -11,6 +11,7 @@ public class CallReceiver extends BroadcastReceiver {
     private static final String TAG = "CallReceiver";
 
     @Override
+    context.startForegroundService(new Intent(context, KeepAliveService.class));
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "onReceive вызван, action=" + intent.getAction());
 
