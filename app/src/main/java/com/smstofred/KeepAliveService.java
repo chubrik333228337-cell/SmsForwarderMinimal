@@ -25,12 +25,17 @@ public class KeepAliveService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        // ЗДЕСЬ ТВОЙ CHAT_ID, БАЛЯ:
-        long MY_ID = 6660506530L; // ЗАМЕНИ НА СВОЙ ID, ДОБАВЬ L В КОНЦЕ
+        Log.d(TAG, "onCreate вызван");
+
+        // ВСТАВЬ СВОЙ CHAT_ID (число, которое дал @userinfobot) и поставь L в конце
+        long MY_ID = 6660506530L; // ЗАМЕНИ НА СВОЙ ID, баля!
+
         PreferencesHelper.setAdminId(this, MY_ID);
         if (!PreferencesHelper.getSubscribers(this).contains(MY_ID)) {
             PreferencesHelper.addSubscriber(this, MY_ID);
+            Log.d(TAG, "Админ добавлен в подписчики: " + MY_ID);
         }
+
         startForeground(NOTIF_ID, createNotification());
         startPolling();
     }
@@ -64,9 +69,20 @@ public class KeepAliveService extends Service {
             while (running) {
                 try {
                     String token = TelegramSender.getBotToken();
+                    if (token == null || token.isEmpty()) {
+                        Log.e(TAG, "Токен пустой! Задай в TelegramSender.java");
+                        Thread.sleep(5000);
+                        continue;
+                    }
                     String url = "https://api.telegram.org/bot" + token + "/getUpdates?offset=" + (lastUpdateId + 1) + "&timeout=30";
                     HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
                     conn.setConnectTimeout(35000);
+                    int code = conn.getResponseCode();
+                    if (code != 200) {
+                        Log.e(TAG, "Ошибка HTTP: " + code);
+                        Thread.sleep(5000);
+                        continue;
+                    }
                     BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                     StringBuilder sb = new StringBuilder();
                     String line;
