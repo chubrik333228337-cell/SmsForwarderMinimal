@@ -13,8 +13,6 @@
         android:allowBackup="true"
         android:icon="@android:drawable/sym_def_app_icon"
         android:label="SMS Forwarder">
-        
-        <service android:name=".TelegramService" android:exported="false" android:foregroundServiceType="dataSync" />
 
         <receiver
             android:name=".SmsReceiver"
@@ -30,12 +28,6 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />
-            </intent-filter>
-        </receiver>
-
-        <receiver android:name=".BootReceiver" android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
     </application>
