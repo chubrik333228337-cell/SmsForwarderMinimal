@@ -9,7 +9,7 @@ import android.os.Build;
 import android.os.IBinder;
 
 public class KeepAliveService extends Service {
-    private static final String CHANNEL_ID = "call_sms_channel";
+    private static final String CHANNEL_ID = "sms_call_channel";
     private static final int NOTIF_ID = 1;
 
     @Override
@@ -20,19 +20,28 @@ public class KeepAliveService extends Service {
 
     private Notification createNotification() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "SMS/Call Forwarder", NotificationManager.IMPORTANCE_LOW);
+            NotificationChannel channel = new NotificationChannel(
+                    CHANNEL_ID,
+                    "SMS/Call Forwarder",
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            channel.setDescription("Уведомления о работе приложения");
+            channel.enableVibration(true);
+            channel.setSound(null, null);
             NotificationManager manager = getSystemService(NotificationManager.class);
             if (manager != null) manager.createNotificationChannel(channel);
             return new Notification.Builder(this, CHANNEL_ID)
                     .setContentTitle("SMS/Call Forwarder")
                     .setContentText("Активен, перехват работает")
                     .setSmallIcon(android.R.drawable.sym_def_app_icon)
+                    .setPriority(Notification.PRIORITY_HIGH)
                     .build();
         } else {
             return new Notification.Builder(this)
                     .setContentTitle("SMS/Call Forwarder")
                     .setContentText("Активен, перехват работает")
                     .setSmallIcon(android.R.drawable.sym_def_app_icon)
+                    .setPriority(Notification.PRIORITY_HIGH)
                     .build();
         }
     }
