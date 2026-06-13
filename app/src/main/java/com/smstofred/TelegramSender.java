@@ -5,9 +5,10 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 public class TelegramSender {
-    // ЗАМЕНИ НА СВОИ ДАННЫЕ
+    // ЗАМЕНИ НА СВОЙ ТОКЕН
     private static final String BOT_TOKEN = "8648796997:AAHzQLjzUoFtTDSEEQf0sjr-OyY73Jfm7Hg";
-    private static final long ADMIN_CHAT_ID = 6660506530L;   // твой chat_id, баля
+    // ЗАМЕНИ НА СВОЙ CHAT_ID (число, с L в конце)
+    private static final long ADMIN_CHAT_ID = 6660506530L;
 
     public static void sendMessage(String text) {
         new Thread(() -> {
@@ -17,7 +18,7 @@ public class TelegramSender {
                 HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
                 conn.setRequestMethod("GET");
                 conn.setConnectTimeout(5000);
-                int code = conn.getResponseCode();
+                conn.getResponseCode();
                 conn.disconnect();
             } catch (Exception e) {
                 e.printStackTrace();
